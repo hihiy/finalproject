@@ -22,14 +22,39 @@ class M3Model():
     def min_max_model(self,c1,c2):
         c1_y = np.ones(c1.shape[0]).reshape(c1.shape[0], 1)
         c2_y = np.zeros(c2.shape[0]).reshape(c2.shape[0], 1)
-        y = np.concatenate([c1_y, c2_y])
-        x = np.concatenate([c1,c2])
+        # y = np.concatenate([c1_y, c2_y])
+        # x = np.concatenate([c1,c2])
         c1_x_split = []
         c2_x_split = []
         c1_y_split = []
         c2_y_split = []
+        tx1 = c1.copy()
+        tx2 = c2.copy()
+        ty1 = c1_y.copy()
+        ty2 = c2_y.copy()
+        for i in range(self.split-1):
+            x1, tx1, y1, ty1 = train_test_split(tx1, ty1, test_size=1.-1./(self.split-i))
+            c1_x_split.append(x1)
+            c1_y_split.append(y1)
+            x2, tx2, y2, ty2 = train_test_split(tx2, ty2, test_size=1. - 1. / (self.split - i))
+            c2_x_split.append(x2)
+            c2_y_split.append(y2)
+
+        minmaxmatrix_x = [[] for i in range(self.split)]
+        minmaxmatrix_y = [[] for i in range(self.split)]
         for i in range(self.split):
-            pass
+            temprx = []
+            tempry = []
+            for j in range(self.split):
+                tempx = np.concatenate([c1_x_split[i], c2_x_split[j]])
+                temprx.append(tempx)
+                tempy = np.concatenate([c1_y_split[i], c2_y_split[j]])
+                tempry.append(tempy)
+            minmaxmatrix_x[i] = temprx
+            minmaxmatrix_y[i] = tempry
+
+        minmaxmodel = []
+        
 
         # temp = np.hstack([x, y]).copy()
         # np.random.shuffle(temp)
